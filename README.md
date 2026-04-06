@@ -65,6 +65,26 @@ For verbose compilation, consider using
 
 Once the build is complete a compiled image can be found in `bin/target/<platform>/<target>/`
 
+### Build With Docker for Wio-WM6108 + WM1302
+
+If you want a reproducible Docker build environment specifically for `Wio-WM6108 + WM1302` on Raspberry Pi 4, use:
+
+```bash
+chmod +x docker/build-wio-wm6108-wm1302.sh
+./docker/build-wio-wm6108-wm1302.sh
+```
+
+This script will:
+- build a Docker image with the dependencies from this README
+- run `./scripts/openmanet_setup.sh -i -b ekh-bcm2711`
+- keep only the `bcm2711_mm6108-spi` target enabled
+- run `make download` and `make`
+- copy the final Raspberry Pi image into `artifacts/wio-wm6108-wm1302/`
+
+Use the generated `*factory.img.gz` file in `artifacts/wio-wm6108-wm1302/` to flash your Raspberry Pi SD card.
+
+You can also build the same image in GitHub Actions from the `Build Wio-WM6108 + WM1302` workflow. It uploads the generated firmware as a workflow artifact.
+
 ### Extending OpenMANET
 
 If you want to contribute a custom package for OpenMANET, and can build it as an OpenWRT package, feel free to open a pull request in the [OpenMANET Packages Repository](https://github.com/OpenMANET/packages).

@@ -1,0 +1,66 @@
+name: Build Wio-WM6108 + WM1302
+
+permissions:
+  contents: read
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: Build Raspberry Pi 4 MM6108 SPI image
+    runs-on: ubuntu-24.04
+    timeout-minutes: 360
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Free up disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          sudo rm -rf /opt/hostedtoolcache/CodeQL
+          sudo docker image prune --all --force
+          df -h
+
+      - name: Restore download and compiler cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            dl
+            .ccache
+          key: wio-wm6108-wm1302-${{ runner.os }}-${{ hashFiles('docker/Dockerfile', 'docker/build-wio-wm6108-wm1302.sh', 'feeds.conf.default', 'boards/ekh-bcm2711/target_diffconfig', 'scripts/openmanet_setup.sh') }}
+          restore-keys: |
+            wio-wm6108-wm1302-${{ runner.os }}-
+
+      - name: Build Wio-WM6108 + WM1302 image
+        shell: bash
+        run: |
+          set -o pipefail
+          chmod +x ./docker/build-wio-wm6108-wm1302.sh
+          JOBS=4 ./docker/build-wio-wm6108-wm1302.sh 2>&1 | tee wio-wm6108-wm1302-build.log
+
+      - name: Show generated artifacts
+        run: |
+          ls -lah artifacts/wio-wm6108-wm1302/
+
+      - name: Upload firmware artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: firmware-wio-wm6108-wm1302
+          path: artifacts/wio-wm6108-wm1302/*
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Upload build log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-log-wio-wm6108-wm1302
+          path: wio-wm6108-wm1302-build.log
+          if-no-files-found: warn
+          retention-days: 30
