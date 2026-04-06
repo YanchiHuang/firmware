@@ -15,6 +15,10 @@ on:
         type: string
 
 jobs:
+  build-wio-wm6108-wm1302:
+    name: Build Wio-WM6108 + WM1302
+    uses: ./.github/workflows/build-wio-wm6108-wm1302.yml
+
   build-ekh-bcm2711:
     name: Build ekh-bcm2711
     uses: ./.github/workflows/build-firmware.yml
@@ -142,7 +146,7 @@ jobs:
 
   release:
     name: Create GitHub Release
-    needs: [build-ekh-bcm2711, build-ekh-bcm2710, build-halowlink2, build-hd01-v2, build-venice]
+    needs: [build-wio-wm6108-wm1302, build-ekh-bcm2711, build-ekh-bcm2710, build-halowlink2, build-hd01-v2, build-venice]
     runs-on: ubuntu-24.04
     steps:
       - name: Checkout repository
