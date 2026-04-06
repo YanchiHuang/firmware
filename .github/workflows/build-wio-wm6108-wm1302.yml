@@ -55,6 +55,29 @@ jobs:
           chmod +x ./docker/build-wio-wm6108-wm1302.sh
           JOBS=4 ./docker/build-wio-wm6108-wm1302.sh 2>&1 | tee wio-wm6108-wm1302-build.log
 
+      - name: Normalize artifact filenames
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+
+          ARTIFACT_DIR="artifacts/wio-wm6108-wm1302"
+
+          for file in "${ARTIFACT_DIR}"/*.img.gz; do
+            base="$(basename "${file}")"
+            lower_base="$(echo "${base}" | tr '[:upper:]' '[:lower:]')"
+
+            if [[ "${lower_base}" == *factory.img.gz ]]; then
+              cp -f "${file}" "${ARTIFACT_DIR}/openmanet-wio-wm6108-wm1302-rpi4-factory.img.gz"
+            elif [[ "${lower_base}" == *sysupgrade.img.gz ]]; then
+              cp -f "${file}" "${ARTIFACT_DIR}/openmanet-wio-wm6108-wm1302-rpi4-sysupgrade.img.gz"
+            fi
+          done
+
+          for file in "${ARTIFACT_DIR}"/*.manifest; do
+            cp -f "${file}" "${ARTIFACT_DIR}/openmanet-wio-wm6108-wm1302-rpi4.manifest"
+          done
+
       - name: Show generated artifacts
         run: |
           ls -lah artifacts/wio-wm6108-wm1302/

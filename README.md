@@ -84,6 +84,7 @@ This script will:
 Use the generated `*factory.img.gz` file in `artifacts/wio-wm6108-wm1302/` to flash your Raspberry Pi SD card.
 
 You can also build the same image in GitHub Actions from the `Build Wio-WM6108 + WM1302` workflow. It uploads the generated firmware as a workflow artifact.
+The GitHub Actions artifact also includes stable filenames like `openmanet-wio-wm6108-wm1302-rpi4-factory.img.gz` for easier download and identification.
 
 ### Extending OpenMANET
 
