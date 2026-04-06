@@ -1,10 +1,14 @@
-FROM ghcr.io/openwrt/buildbot/buildworker-v3.8.0:v9
+ARG BASE_IMAGE=ghcr.io/openwrt/buildbot/buildworker-v3.8.0:v9
+
+FROM ${BASE_IMAGE} AS deps
 
 USER root
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y --no-install-recommends \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+    --mount=type=cache,target=/var/lib/apt/lists,sharing=locked \
+    apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     ca-certificates \
     clang \
@@ -42,6 +46,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     xz-utils \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
+
+FROM deps AS builder
 
 WORKDIR /workspace/firmware
 
