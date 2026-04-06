@@ -19,6 +19,7 @@ docker build -t "${IMAGE_NAME}" -f "${REPO_ROOT}/docker/Dockerfile" "${REPO_ROOT
 DOCKER_ARGS=(
     --rm
     --user "$(id -u):$(id -g)"
+    --entrypoint /bin/bash
     --workdir /workspace/firmware
     -e HOME=/tmp/openmanet-home
     -e CCACHE_DIR=/workspace/firmware/.ccache
@@ -32,6 +33,7 @@ DOCKER_ARGS=(
 if [[ "${KEEP_CONTAINER}" == "1" ]]; then
     DOCKER_ARGS=(
         --user "$(id -u):$(id -g)"
+        --entrypoint /bin/bash
         --workdir /workspace/firmware
         -e HOME=/tmp/openmanet-home
         -e CCACHE_DIR=/workspace/firmware/.ccache
@@ -43,7 +45,7 @@ if [[ "${KEEP_CONTAINER}" == "1" ]]; then
     )
 fi
 
-docker run "${DOCKER_ARGS[@]}" "${IMAGE_NAME}" /bin/bash -lc '
+docker run "${DOCKER_ARGS[@]}" "${IMAGE_NAME}" -lc '
     set -euo pipefail
 
     mkdir -p "$HOME"
