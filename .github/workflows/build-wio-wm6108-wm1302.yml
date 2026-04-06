@@ -4,6 +4,16 @@ permissions:
   contents: read
 
 on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'boards/ekh-bcm2711/**'
+      - 'docker/**'
+      - 'feeds.conf.default'
+      - '.github/workflows/build-wio-wm6108-wm1302.yml'
+      - '.github/workflows/build-release.yml'
+      - 'scripts/openmanet_setup.sh'
   workflow_call:
   workflow_dispatch:
 
